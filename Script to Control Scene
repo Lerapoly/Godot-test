@@ -1,0 +1,75 @@
+extends Control
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = "text"
+
+
+const SQLite = preload("res://addons/godot-sqlite/bin/gdsqlite.gdns")
+var db #Db Object
+var db_name = "res://SQL/DataBaseNew" #Path to db
+var button1 = Button.new()
+var button2 = Button.new()
+var button3 = Button.new()
+var button4 = Button.new()
+var question
+var answer1
+
+onready var my_label = get_node("Label")
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	db = SQLite.new()
+	db.path = db_name
+	readDB()
+	
+
+
+	pass # Replace with function body.
+
+func readDB():
+	db.open_db()
+	var tableName = "Game"
+	db.query("select * from " + tableName + ";")
+	
+	# Вывод вопроса на Label
+	for i in range(0, db.query_result.size()):
+		question = str(db.query_result[i]["Question"])
+		my_label.text = str("Question: " + question) 
+		
+	# Вывод вопросов на кнопки
+	for i in range(0, db.query_result.size()):
+		
+		answer1 = str(db.query_result[i]["Answer1"])
+		button1.text = str("1." + answer1)
+		button1.connect("pressed", self, "_button_pressed")
+		button1.set_position(button1.get_position() + Vector2(10, 30))
+		add_child(button1)
+		
+		button2.text = str("2." + db.query_result[i]["Answer2"])
+		button2.connect("pressed", self, "_button_pressed")
+		button2.set_position(button2.get_position() + Vector2(10, 40))
+		add_child(button2)
+		
+		button3.text = str("3." + db.query_result[i]["Answer3"])
+		button3.connect("pressed", self, "_button_pressed")
+		button3.set_position(button3.get_position() + Vector2(10, 50))
+		add_child(button3)
+		
+		button4.text = str("4." + db.query_result[i]["Right Answer"])
+		button4.connect("pressed", self, "_button_pressed")
+		button4.set_position(button4.get_position() + Vector2(10, 60))
+		add_child(button4)
+		
+
+
+
+
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+
